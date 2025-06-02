@@ -59,3 +59,24 @@ If you discover a security vulnerability within Laravel, please send an e-mail t
 ## License
 
 The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+
+## Inicialização do Projeto
+<p>Ao clonar o projeto, comentar CMD php artisan serve --host 0.0.0.0 --port=8005 no Dockerfile.development</p>
+
+<p>após rodar docker-compose -f docker-compose.development.yml up -d --build, acessar a imagem docker exec -it api_biblioteca_php bash</p>
+```
+após o composer install poderá descomentar o CMD php artisan serve --host 0.0.0.0 --port=8005
+```
+
+<p>com o passo a passo, o back estará funcionando normalmente</p>
+
+<p>P1: COMENTAR O CMD NO DOCKERFILE</p>
+<p>P2: RODAR O PROJETO E ACESSAR A IMAGEM</p>
+<p>P3: ADICIONAR O .ENV QUE SERÁ ENVIADO</p>
+<p>P4: COMPOSER INSTALL</p>
+<p>P4: RODAR AS MIGRATIONS</p>
+
+
+### Start docker e compilar projeto
+```
+```
