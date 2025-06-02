@@ -1,0 +1,26 @@
+version: "3"
+services:  
+    mysql:
+        image: "mysql:5.7"
+        volumes:
+            - ~/data/mysql:/var/lib/mysql
+        environment:
+            - "MYSQL_ROOT_PASSWORD=123456"
+        ports:
+            - "3308:3306"
+    php:
+        build: 
+            context: ./
+            dockerfile: Dockerfile.development
+            args:
+                user: desenvolvedor
+                uid: 1000
+        volumes:
+            - ./:/Projetos
+        ports:
+            - "8005:8005"
+        links: 
+            - mysql
+        tty: true
+        container_name: "apiteste_php"
+            

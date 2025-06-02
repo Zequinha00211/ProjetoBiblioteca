@@ -1,0 +1,54 @@
+FROM php:8.4
+
+RUN  apt-get update -y && apt-get install libzip-dev libmongoc-1.0-0 libpq-dev libicu-dev  git gzip zip unzip -y libxml2-dev libgmp-dev re2c libmhash-dev libmcrypt-dev file\
+    && curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer \
+    && docker-php-ext-install mysqli \
+    && docker-php-ext-install pdo_mysql \
+    && docker-php-ext-install soap \
+    && ln -s /usr/include/x86_64-linux-gnu/gmp.h /usr/local/include/ \
+    && docker-php-ext-configure gmp \
+    && docker-php-ext-install gmp \
+    && docker-php-ext-configure zip \
+    && docker-php-ext-install zip \
+    && docker-php-ext-configure intl \
+    && docker-php-ext-install intl 
+
+RUN apt-get update && apt-get install -y libbz2-dev
+RUN docker-php-ext-install bz2
+RUN apt-get install -y libcurl4-openssl-dev pkg-config libssl-dev
+RUN pecl install mongodb && docker-php-ext-enable mongodb
+RUN pecl config-set php_ini /etc/php.ini
+RUN apt-get update \
+  && DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
+  # needed for gd
+  libfreetype6-dev \
+  libjpeg62-turbo-dev \
+  libpng-dev \
+  && rm -rf /var/lib/apt/lists/*
+RUN docker-php-ext-configure gd --with-freetype --with-jpeg \
+  && docker-php-ext-install -j "$(nproc)" gd
+
+RUN sed -E -i -e 's/max_execution_time = 30/max_execution_time = 7200/' /usr/local/etc/php/php.ini-production \
+ && sed -E -i -e 's/memory_limit = 128M/memory_limit = -1/' /usr/local/etc/php/php.ini-production \
+ && sed -E -i -e 's/post_max_size = 8M/post_max_size = 8G/' /usr/local/etc/php/php.ini-production \
+ && sed -E -i -e 's/upload_max_filesize = 2M/upload_max_filesize = 8G/' /usr/local/etc/php/php.ini-production 
+
+RUN ln -s /usr/local/etc/php/php.ini-production /usr/local/etc/php/php.ini
+RUN echo 'memory_limit = -1' >> /usr/local/etc/php/conf.d/docker-php-memlimit.ini;
+
+RUN mkdir /Projetos
+WORKDIR /Projetos
+
+# ARG user e ARG uid estão no docker-compose.development
+#Adicionar permissões ao usuário dentro do docker baseados nas mesmas permissões da máquina local
+ARG user
+ARG uid
+RUN useradd -G www-data,root -u $uid -d /home/$user $user
+RUN mkdir -p /home/$user/.composer && \
+    chown -R $user:$user /home/$user
+USER $user
+#Fim adicionar permissoes
+
+CMD php artisan serve --host 0.0.0.0 --port=8005
+
+EXPOSE 8005
