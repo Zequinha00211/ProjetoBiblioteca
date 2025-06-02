@@ -22,5 +22,5 @@ services:
         links: 
             - mysql
         tty: true
-        container_name: "apiteste_php"
+        container_name: "api_biblioteca_php"
             

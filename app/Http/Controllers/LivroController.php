@@ -25,7 +25,7 @@ class LivroController
                     'erros' => (array)$validator->messages()
                 ], 400);
             }
-            for ($i = 0 ; $i < (int)$request->QTDLIVROS; $i++) {
+            for ($i = 0; $i < (int)$request->QTDLIVROS; $i++) {
                 $livro = new Livro();
                 $livro->NOMELIVRO       = $request->NOMELIVRO;
                 $livro->IDAUTOR         = $request->IDAUTOR;
@@ -51,7 +51,6 @@ class LivroController
                 'IDAUTOR' => 'required',
                 'NUMEROREGISTRO' => 'required',
                 'SITUACAOLIVRO' => 'required',
-                'QTDLIVROS'
             ]);
 
             if ($validator->fails()) {
@@ -67,7 +66,6 @@ class LivroController
                 $livro->SITUACAOLIVRO   = $request->SITUACAOLIVRO;
                 $livro->IDGENERO        = $request->IDGENERO;
                 $livro->EDITORA         = $request->EDITORA;
-                $livro->QTDLIVROS       = $request->QTDLIVROS;
                 $livro->update();
             }
 
@@ -87,7 +85,13 @@ class LivroController
                 ->get();
 
             foreach ($livros as $livro) {
-                $livro->SITUACAO = $livro->SITUACAOLIVRO == 0 ? 'DISPONÍVEL' : 'EMPRESTADO';
+                if ($livro->SITUACAOLIVRO == 0) {
+                    $livro->SITUACAO = 'DISPONÍVEL';
+                } else if ($livro->SITUACAOLIVRO == 1) {
+                    $livro->SITUACAO = 'EMPRESTADO';
+                } else {
+                    $livro->SITUACAO = 'ATRASADO';
+                }
             }
             return response()->json(['sucesso' => true, 'data' => $livros]);
         } catch (\Exception $e) {
@@ -134,12 +138,14 @@ class LivroController
             $livro = Livro::where('ID', $request->ID)->first();
 
             if (!empty($livro) && $request->SITUACAOLIVRO == 0) {
-                $livro->SITUACAOLIVRO  = 1;
-                $livro->DATADEVOLUCAO = Carbon::now()->addDays(7)->toDateString();
+                $livro->SITUACAOLIVRO   = 1;
+                $livro->IDUSUARIO       = $request->IDUSUARIO;
+                $livro->DATADEVOLUCAO   = Carbon::now()->addDays(7)->toDateString();
                 $livro->update();
             } else {
-                $livro->SITUACAOLIVRO  = 0;
-                $livro->DATADEVOLUCAO = null;
+                $livro->SITUACAOLIVRO   = 0;
+                $livro->IDUSUARIO       = null;
+                $livro->DATADEVOLUCAO   = null;
                 $livro->update();
             }
 

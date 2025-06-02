@@ -19,7 +19,8 @@ class Livro extends Model
         'SITUACAOLIVRO',
         'IDGENERO',
         'EDITORA',
-        'DATADEVOLUCAO'
+        'DATADEVOLUCAO',
+        'IDUSUARIO'
     ];
 
     public function scopePorFiltro($query, $filtros)
