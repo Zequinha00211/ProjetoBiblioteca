@@ -75,6 +75,7 @@ após o composer install poderá descomentar o CMD php artisan serve --host 0.0.
 <p>P3: ADICIONAR O .ENV QUE SERÁ ENVIADO</p>
 <p>P4: COMPOSER INSTALL</p>
 <p>P4: RODAR AS MIGRATIONS</p>
+<p>P5: CRIAR O PRIMEIRO USUÁRIO ATRAVÉS DA DOCUMENTAÇÃO DO INSOMNIA, APÓS ISSO CRIAR NORMALMENTE PELO FRONT</p>
 
 
 ### Start docker e compilar projeto
